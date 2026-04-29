@@ -1,0 +1,69 @@
+services:
+  # ==================== MARIA DB (Private Service) ====================
+  - type: pserv
+    name: openemr-db
+    runtime: image
+    image: mariadb:11
+    plan: starter
+    region: oregon                     # ← Change to your preferred region
+    envVars:
+      - key: MYSQL_ROOT_PASSWORD
+        sync: false                    # Set manually after deploy (strong password!)
+      - key: MYSQL_DATABASE
+        value: openemr
+      - key: MYSQL_USER
+        value: openemr
+      - key: MYSQL_PASSWORD
+        sync: false                    # Set manually (strong password!)
+    disk:
+      name: mariadb-data
+      mountPath: /var/lib/mysql
+      sizeGB: 10
+
+  # ==================== OPENEMR WEB APP (Build from your Dockerfile) ====================
+  - type: web
+    name: openemr-app
+    runtime: docker
+    plan: starter
+    region: oregon
+    dockerfilePath: Dockerfile         # ← Points to your new Dockerfile
+    rootDirectory: .                   # Build from repo root
+    envVars:
+      - key: MYSQL_HOST
+        fromService:
+          name: openemr-db
+          type: pserv
+          property: host
+      - key: MYSQL_PORT
+        value: "3306"
+      - key: MYSQL_ROOT_PASS
+        fromService:
+          name: openemr-db
+          type: pserv
+          envVarKey: MYSQL_ROOT_PASSWORD
+      - key: MYSQL_USER
+        value: openemr
+      - key: MYSQL_PASS
+        fromService:
+          name: openemr-db
+          type: pserv
+          envVarKey: MYSQL_PASSWORD
+      - key: MYSQL_DATABASE
+        value: openemr
+      - key: OE_USER
+        value: admin
+      - key: OE_PASS
+        sync: false                    # ← Set a strong admin password manually
+      - key: FORCE_HTTPS
+        value: "true"
+      - key: SITE
+        value: default
+      - key: OPENEMR_SETTING_rest_api
+        value: "1"
+    disk:
+      name: openemr-sites
+      mountPath: /var/www/localhost/htdocs/openemr/sites
+      sizeGB: 10
+
+    # Optional: Health check
+    healthCheckPath: /openemr/interface/login/login.php
