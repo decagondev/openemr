@@ -3,18 +3,19 @@ services:
   - type: pserv
     name: openemr-db
     runtime: image
-    image: mariadb:11
+    image:
+      url: mariadb:11
     plan: starter
     region: oregon
     envVars:
       - key: MYSQL_ROOT_PASSWORD
-        value: SuperSecureRootPass123!     # CHANGE THIS
+        value: SuperSecureRootPass123!     # ← CHANGE THIS
       - key: MYSQL_DATABASE
         value: openemr
       - key: MYSQL_USER
         value: openemr
       - key: MYSQL_PASSWORD
-        value: SuperSecureUserPass456!     # CHANGE THIS
+        value: SuperSecureUserPass456!     # ← CHANGE THIS
     disk:
       name: mariadb-data
       mountPath: /var/lib/mysql
@@ -52,7 +53,7 @@ services:
       - key: OE_USER
         value: admin
       - key: OE_PASS
-        value: YourStrongAdminPass789!     # CHANGE THIS
+        value: YourStrongAdminPass789!     # ← CHANGE THIS
       - key: FORCE_HTTPS
         value: "true"
       - key: SITE
