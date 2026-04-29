@@ -1,33 +1,32 @@
 services:
-  # ==================== MARIA DB (Private Service) ====================
+  # ==================== MARIA DB ====================
   - type: pserv
     name: openemr-db
     runtime: image
     image: mariadb:11
     plan: starter
-    region: oregon                     # ← Change to your preferred region
+    region: oregon
     envVars:
       - key: MYSQL_ROOT_PASSWORD
-        sync: false                    # Set manually after deploy (strong password!)
+        value: SuperSecureRootPass123!     # CHANGE THIS
       - key: MYSQL_DATABASE
         value: openemr
       - key: MYSQL_USER
         value: openemr
       - key: MYSQL_PASSWORD
-        sync: false                    # Set manually (strong password!)
+        value: SuperSecureUserPass456!     # CHANGE THIS
     disk:
       name: mariadb-data
       mountPath: /var/lib/mysql
       sizeGB: 10
 
-  # ==================== OPENEMR WEB APP (Build from your Dockerfile) ====================
+  # ==================== OPENEMR WEB APP ====================
   - type: web
     name: openemr-app
     runtime: docker
     plan: starter
     region: oregon
-    dockerfilePath: Dockerfile         # ← Points to your new Dockerfile
-    rootDirectory: .                   # Build from repo root
+    dockerfilePath: Dockerfile
     envVars:
       - key: MYSQL_HOST
         fromService:
@@ -53,17 +52,12 @@ services:
       - key: OE_USER
         value: admin
       - key: OE_PASS
-        sync: false                    # ← Set a strong admin password manually
+        value: YourStrongAdminPass789!     # CHANGE THIS
       - key: FORCE_HTTPS
         value: "true"
       - key: SITE
         value: default
-      - key: OPENEMR_SETTING_rest_api
-        value: "1"
     disk:
       name: openemr-sites
       mountPath: /var/www/localhost/htdocs/openemr/sites
       sizeGB: 10
-
-    # Optional: Health check
-    healthCheckPath: /openemr/interface/login/login.php
