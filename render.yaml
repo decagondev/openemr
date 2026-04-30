@@ -9,19 +9,19 @@ services:
     region: oregon
     envVars:
       - key: MYSQL_ROOT_PASSWORD
-        value: SuperSecureRootPass123!        # ← CHANGE THIS
+        value: SuperSecureRootPass123!        
       - key: MYSQL_DATABASE
         value: openemr
       - key: MYSQL_USER
         value: openemr
       - key: MYSQL_PASSWORD
-        value: SuperSecureUserPass456!        # ← CHANGE THIS
+        value: SuperSecureUserPass456!        
     disk:
       name: mariadb-data
       mountPath: /var/lib/mysql
       sizeGB: 10
 
-  # ==================== OPENEMR WEB APP (Full Build) ====================
+  # ==================== OPENEMR WEB APP ====================
   - type: web
     name: openemr-app
     runtime: docker
@@ -53,13 +53,9 @@ services:
       - key: OE_USER
         value: admin
       - key: OE_PASS
-        value: YourStrongAdminPass789!        # ← CHANGE THIS
+        value: YourStrongAdminPass789!        
       - key: FORCE_HTTPS
         value: "true"
-      - key: SITE
-        value: default
-      - key: OPENEMR_SETTING_rest_api
-        value: "1"
     disk:
       name: openemr-sites
       mountPath: /var/www/localhost/htdocs/openemr/sites
