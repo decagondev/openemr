@@ -13,6 +13,13 @@ RUN chown -R apache:apache /var/www/localhost/htdocs/openemr \
 # Make sure Apache listens on port 80 (important for Render)
 RUN echo "Listen 80" >> /etc/apache2/ports.conf
 
+RUN echo '\
+<FilesMatch "\.(php|html|css|js)$">\
+    Header set Cache-Control "no-cache, no-store, must-revalidate, max-age=0"\
+    Header set Pragma "no-cache"\
+    Header set Expires "Thu, 01 Jan 1970 00:00:00 GMT"\
+</FilesMatch>' >> /etc/apache2/apache2.conf
+
 WORKDIR /var/www/localhost/htdocs/openemr
 
 # Official startup script
