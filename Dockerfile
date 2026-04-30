@@ -1,5 +1,7 @@
 FROM openemr/openemr:latest
 
+ARG CACHEBUST=20250430-3
+
 # Copy your fork's files
 COPY . /var/www/localhost/htdocs/openemr/
 
